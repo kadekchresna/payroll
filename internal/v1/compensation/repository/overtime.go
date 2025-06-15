@@ -55,7 +55,7 @@ func (r *overtimeRepository) GetByDateAndEmployeeID(ctx context.Context, employe
 		return nil, err
 	}
 
-	res := make([]model.Overtime, len(os))
+	res := make([]model.Overtime, 0, len(os))
 
 	for _, o := range os {
 		res = append(res, model.Overtime{
@@ -71,4 +71,35 @@ func (r *overtimeRepository) GetByDateAndEmployeeID(ctx context.Context, employe
 	}
 
 	return res, nil
+}
+
+func (r *overtimeRepository) SumOvertimeByDateRange(ctx context.Context, startDate, endDate time.Time) ([]*model.EmployeeOvertimeSummary, error) {
+	db := r.getDB(ctx)
+
+	var daos []dao.OvertimeSumDAO
+
+	query := `
+		WITH overtime_period AS (
+			SELECT hours, employee_id
+			FROM overtimes
+			WHERE date >= ? AND date <= ?
+		)
+		SELECT SUM(op.hours) AS sum, op.employee_id
+		FROM overtime_period op
+		GROUP BY op.employee_id;
+	`
+
+	if err := db.Raw(query, startDate, endDate).Scan(&daos).Error; err != nil {
+		return nil, err
+	}
+
+	result := make([]*model.EmployeeOvertimeSummary, 0, len(daos))
+	for _, d := range daos {
+		result = append(result, &model.EmployeeOvertimeSummary{
+			EmployeeID: d.EmployeeID,
+			TotalHours: d.TotalHours,
+		})
+	}
+
+	return result, nil
 }

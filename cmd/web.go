@@ -14,6 +14,7 @@ import (
 	helper_db "github.com/kadekchresna/payroll/infrastructure/db/helper"
 	audit_repo "github.com/kadekchresna/payroll/internal/v1/audit/repository"
 	employee_repo "github.com/kadekchresna/payroll/internal/v1/employee/repository"
+	payslip_repo "github.com/kadekchresna/payroll/internal/v1/payslip/repository"
 
 	attendance_delivery_http "github.com/kadekchresna/payroll/internal/v1/attendance/delivery/http"
 	attendance_repo "github.com/kadekchresna/payroll/internal/v1/attendance/repository"
@@ -26,6 +27,9 @@ import (
 	compensation_delivery_http "github.com/kadekchresna/payroll/internal/v1/compensation/delivery/http"
 	compensation_repository "github.com/kadekchresna/payroll/internal/v1/compensation/repository"
 	compensation_usecase "github.com/kadekchresna/payroll/internal/v1/compensation/usecase"
+
+	payroll_delivery_http "github.com/kadekchresna/payroll/internal/v1/payroll/delivery/http"
+	payroll_usecase "github.com/kadekchresna/payroll/internal/v1/payroll/usecase"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -90,6 +94,7 @@ func run() {
 
 	employeeRepo := employee_repo.NewEmployeeRepository(db)
 	auditRepo := audit_repo.NewAuditRepository(db)
+	payslipRepo := payslip_repo.NewPayslipRepository(db)
 
 	attendanceRepo := attendance_repo.NewAttendanceRepository(db)
 	attendanceUsecase := attendance_usecase.NewAttendanceUsecase(timer, attendanceRepo, employeeRepo, auditRepo, transactionBundler)
@@ -109,6 +114,9 @@ func run() {
 	reimbursementUsecase := compensation_usecase.NewReimbursementUsecase(timer, reimbursementRepo, auditRepo, transactionBundler)
 	compensation_delivery_http.NewOvertimeHandler(v1, config, overtimeUsecase)
 	compensation_delivery_http.NewReimbursementHandler(v1, config, reimbursementUsecase)
+
+	payrollUsecase := payroll_usecase.NewPayrollUsecase(timer, overtimeRepo, reimbursementRepo, attendanceRepo, attendancePeriodRepo, auditRepo, employeeRepo, payslipRepo, transactionBundler)
+	payroll_delivery_http.NewPayrollHandler(v1, config, payrollUsecase)
 	// V1 Endpoints
 
 	s := http.Server{

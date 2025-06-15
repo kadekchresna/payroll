@@ -10,4 +10,5 @@ import (
 type IOvertimeRepository interface {
 	Create(ctx context.Context, ot *model.Overtime) (int, error)
 	GetByDateAndEmployeeID(ctx context.Context, employeeID int, date time.Time) ([]model.Overtime, error)
+	SumOvertimeByDateRange(ctx context.Context, startDate, endDate time.Time) ([]*model.EmployeeOvertimeSummary, error)
 }

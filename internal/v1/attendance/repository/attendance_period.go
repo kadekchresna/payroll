@@ -77,3 +77,36 @@ func getBoolValue(b *bool) bool {
 	}
 	return *b
 }
+
+func (r *attendancePeriodRepository) GetByID(ctx context.Context, id int) (*model.AttendancePeriod, error) {
+	var daoPeriod dao.AttendancePeriodDAO
+
+	if err := r.db.WithContext(ctx).
+		First(&daoPeriod, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &model.AttendancePeriod{
+		ID:                 daoPeriod.ID,
+		PeriodStart:        daoPeriod.PeriodStart,
+		PeriodEnd:          daoPeriod.PeriodEnd,
+		IsPayslipGenerated: getBoolValue(daoPeriod.IsPayslipGenerated),
+	}, nil
+}
+
+func (r *attendancePeriodRepository) UpdatePeriod(ctx context.Context, ap *model.AttendancePeriod) error {
+	db := r.getDB(ctx)
+
+	updateData := map[string]interface{}{
+		"is_payslip_generated": ap.IsPayslipGenerated,
+		"updated_at":           ap.UpdatedAt,
+		"updated_by":           ap.UpdatedBy,
+	}
+
+	return db.WithContext(ctx).Model(&dao.AttendancePeriodDAO{}).
+		Where("id = ?", ap.ID).
+		Updates(updateData).Error
+}

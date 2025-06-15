@@ -92,7 +92,18 @@ func (r *attendanceRepository) GetByID(ctx context.Context, id int) (*model.Atte
 
 func (r *attendanceRepository) GetByDateAndEmployeeID(ctx context.Context, employeeID int, date time.Time) (*model.Attendance, error) {
 	var da dao.AttendanceDAO
-	err := r.db.WithContext(ctx).Where("employee_id = ?", employeeID).Where("date = ?", date.Format(time.DateOnly)).First(&da).Error
+
+	db := r.db.WithContext(ctx)
+
+	if employeeID > 0 {
+		db = db.Where("employee_id = ?", employeeID)
+	}
+
+	if !date.IsZero() {
+		db = db.Where("date = ?", date.Format(time.DateOnly))
+	}
+
+	err := db.First(&da).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -118,4 +129,34 @@ func (r *attendanceRepository) GetByDateAndEmployeeID(ctx context.Context, emplo
 		CheckedInAt:  da.CheckedInAt,
 		CheckedOutAt: checkedOutAt,
 	}, nil
+}
+
+func (r *attendanceRepository) GetEmployeeCountByDateRange(ctx context.Context, periodStart time.Time, periodEnd time.Time) ([]*model.EmployeeAttendanceCount, error) {
+	db := r.getDB(ctx)
+
+	var daos []dao.AttendanceCountDAO
+	query := `
+		WITH attandances_period AS (
+			SELECT employee_id 
+			FROM attendances 
+			WHERE date >= ? AND date <= ?
+		)
+		SELECT employee_id, COUNT(employee_id) 
+		FROM attandances_period 
+		GROUP BY employee_id;
+	`
+
+	if err := db.Raw(query, periodStart, periodEnd).Scan(&daos).Error; err != nil {
+		return nil, err
+	}
+
+	result := make([]*model.EmployeeAttendanceCount, 0, len(daos))
+	for _, daoItem := range daos {
+		result = append(result, &model.EmployeeAttendanceCount{
+			EmployeeID: daoItem.EmployeeID,
+			Count:      daoItem.Count,
+		})
+	}
+
+	return result, nil
 }

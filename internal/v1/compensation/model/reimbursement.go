@@ -14,3 +14,8 @@ type Reimbursement struct {
 	UpdatedBy   int       `json:"updated_by"`
 	PayslipID   int       `json:"payslip_id"`
 }
+
+type EmployeeReimbursementSummary struct {
+	EmployeeID  int     `json:"employee_id"`
+	TotalAmount float64 `json:"total_amount"`
+}

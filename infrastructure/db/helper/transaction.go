@@ -42,6 +42,12 @@ func (t *transactionBundler) WithTransaction(ctx context.Context, fn func(ctx co
 		return tx.Error
 	}
 
+	defer func() {
+		if e := recover(); e != nil {
+			tx.Rollback()
+		}
+	}()
+
 	ctxWithTx := NewContextWithTx(ctx, tx)
 
 	if err := fn(ctxWithTx); err != nil {

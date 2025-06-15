@@ -12,3 +12,8 @@ type Overtime struct {
 	CreatedBy  int       `json:"created_by"`
 	UpdatedBy  int       `json:"updated_by"`
 }
+
+type EmployeeOvertimeSummary struct {
+	EmployeeID int `json:"employee_id"`
+	TotalHours int `json:"total_hours"`
+}

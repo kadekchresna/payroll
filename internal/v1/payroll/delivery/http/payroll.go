@@ -1,0 +1,103 @@
+package delivery_http
+
+import (
+	"net/http"
+
+	"github.com/kadekchresna/payroll/config"
+	"github.com/kadekchresna/payroll/helper/jwt"
+	"github.com/kadekchresna/payroll/helper/logger"
+
+	"github.com/kadekchresna/payroll/internal/v1/payroll/dto"
+	usecase_interface "github.com/kadekchresna/payroll/internal/v1/payroll/usecase/interface"
+
+	"github.com/labstack/echo/v4"
+)
+
+type PayrollHandler struct {
+	uc     usecase_interface.IPayrollUsecase
+	config config.Config
+}
+
+func NewPayrollHandler(e *echo.Group, config config.Config, uc usecase_interface.IPayrollUsecase) {
+	handler := &PayrollHandler{
+		uc:     uc,
+		config: config,
+	}
+
+	v1Compensation := e.Group("/payroll")
+
+	v1Compensation.Use(jwt.JWTMiddleware)
+
+	v1Compensation.POST("", handler.Create)
+	v1Compensation.GET("", handler.GetPayroll)
+	v1Compensation.GET("/summary", handler.GetPayrollSummary)
+}
+
+type PayrollRequest struct {
+	AttendancePeriodID int `json:"attendance_period_id"`
+}
+
+func (h *PayrollHandler) Create(c echo.Context) error {
+	var req PayrollRequest
+
+	ctx := c.Request().Context()
+	if err := c.Bind(&req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid input")
+	}
+
+	requestID, _ := ctx.Value(logger.RequestIDKey).(string)
+
+	userID, _ := c.Get(jwt.USER_ID_KEY).(int)
+
+	payroll := dto.CreatePayrollRequest{
+		UserID:             userID,
+		AttendancePeriodID: req.AttendancePeriodID,
+	}
+
+	if err := h.uc.CreatePayroll(ctx, payroll); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.JSON(http.StatusCreated, echo.Map{"message": "payroll created", "request_id": requestID})
+}
+
+type GetPayrollRequest struct {
+	PayslipID int `query:"payslip_id"`
+}
+
+func (h *PayrollHandler) GetPayroll(c echo.Context) error {
+	var req GetPayrollRequest
+
+	ctx := c.Request().Context()
+	if err := c.Bind(&req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid input")
+	}
+
+	requestID, _ := ctx.Value(logger.RequestIDKey).(string)
+	employeeID, _ := c.Get(jwt.EMPLOYEE_ID_KEY).(int)
+
+	payroll := dto.GetEmployeePayrollRequest{
+		EmployeeID: employeeID,
+		PayslipID:  req.PayslipID,
+	}
+
+	res, err := h.uc.GetPayrollByID(ctx, &payroll)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.JSON(http.StatusCreated, echo.Map{"message": "payroll retrieve successfully", "request_id": requestID, "data": res})
+}
+
+func (h *PayrollHandler) GetPayrollSummary(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	requestID, _ := ctx.Value(logger.RequestIDKey).(string)
+
+	res, err := h.uc.GetPayrollSummary(ctx)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.JSON(http.StatusCreated, echo.Map{"message": "payroll summary retrieve successfully", "request_id": requestID, "data": res})
+}

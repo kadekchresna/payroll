@@ -13,3 +13,8 @@ type Attendance struct {
 	CreatedBy    int        `json:"created_by"`
 	UpdatedBy    int        `json:"updated_by"`
 }
+
+type EmployeeAttendanceCount struct {
+	EmployeeID int `json:"employee_id"`
+	Count      int `json:"count"`
+}
