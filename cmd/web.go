@@ -9,14 +9,24 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kadekchresna/payroll/config"
 	"github.com/kadekchresna/payroll/helper/logger"
+	helper_time "github.com/kadekchresna/payroll/helper/time"
 	driver_db "github.com/kadekchresna/payroll/infrastructure/db"
+	helper_db "github.com/kadekchresna/payroll/infrastructure/db/helper"
+	audit_repo "github.com/kadekchresna/payroll/internal/v1/audit/repository"
+	employee_repo "github.com/kadekchresna/payroll/internal/v1/employee/repository"
+
 	attendance_delivery_http "github.com/kadekchresna/payroll/internal/v1/attendance/delivery/http"
 	attendance_repo "github.com/kadekchresna/payroll/internal/v1/attendance/repository"
 	attendance_usecase "github.com/kadekchresna/payroll/internal/v1/attendance/usecase"
+
 	auth_delivery_http "github.com/kadekchresna/payroll/internal/v1/auth/delivery/http"
 	auth_repository "github.com/kadekchresna/payroll/internal/v1/auth/repository"
 	auth_usecase "github.com/kadekchresna/payroll/internal/v1/auth/usecase"
-	employee_repo "github.com/kadekchresna/payroll/internal/v1/employee/repository"
+
+	compensation_delivery_http "github.com/kadekchresna/payroll/internal/v1/compensation/delivery/http"
+	compensation_repository "github.com/kadekchresna/payroll/internal/v1/compensation/repository"
+	compensation_usecase "github.com/kadekchresna/payroll/internal/v1/compensation/usecase"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/spf13/cobra"
@@ -66,21 +76,39 @@ func run() {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
+	e.Use(logger.RequestIDMiddleware)
+	e.Use(logger.ClientIPMiddleware)
+
 	config := config.InitConfig()
 	db := driver_db.InitDB(config.DatabaseDSN)
 
 	// V1 Endpoints
 	v1 := e.Group("/api/v1")
 
+	timer := helper_time.NewTime(nil)
+	transactionBundler := helper_db.NewTransactionBundler(db)
+
 	employeeRepo := employee_repo.NewEmployeeRepository(db)
+	auditRepo := audit_repo.NewAuditRepository(db)
 
 	attendanceRepo := attendance_repo.NewAttendanceRepository(db)
-	attendanceUsecase := attendance_usecase.NewAttendanceUsecase(attendanceRepo)
+	attendanceUsecase := attendance_usecase.NewAttendanceUsecase(timer, attendanceRepo, employeeRepo, auditRepo, transactionBundler)
 	attendance_delivery_http.NewAttendanceHandler(v1, config, attendanceUsecase)
 
+	attendancePeriodRepo := attendance_repo.NewAttendancePeriodRepository(db)
+	attendancePeriodUsecase := attendance_usecase.NewAttendancePeriodUsecase(timer, attendancePeriodRepo, transactionBundler, auditRepo)
+	attendance_delivery_http.NewAttendancePeriodHandler(v1, config, attendancePeriodUsecase)
+
 	userRepo := auth_repository.NewUserRepo(db)
-	userUsecase := auth_usecase.NewUserUsecase(userRepo, config, employeeRepo)
+	userUsecase := auth_usecase.NewUserUsecase(config, timer, userRepo, employeeRepo)
 	auth_delivery_http.NewUsersHandler(v1, userUsecase)
+
+	overtimeRepo := compensation_repository.NewOvertimeRepository(db)
+	reimbursementRepo := compensation_repository.NewReimbursementRepository(db)
+	overtimeUsecase := compensation_usecase.NewOvertimeUsecase(overtimeRepo, attendanceRepo, auditRepo, transactionBundler, timer)
+	reimbursementUsecase := compensation_usecase.NewReimbursementUsecase(timer, reimbursementRepo, auditRepo, transactionBundler)
+	compensation_delivery_http.NewOvertimeHandler(v1, config, overtimeUsecase)
+	compensation_delivery_http.NewReimbursementHandler(v1, config, reimbursementUsecase)
 	// V1 Endpoints
 
 	s := http.Server{

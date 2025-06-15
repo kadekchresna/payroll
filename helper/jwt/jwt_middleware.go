@@ -8,6 +8,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+const (
+	USER_ID_KEY           = "user_id"
+	USER_ROLE_KEY         = "user_role"
+	EMPLOYEE_ID_KEY       = "employee_id"
+	EMPLOYEE_FULLNAME_KEY = "employee_fullname"
+)
+
 func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		authHeader := c.Request().Header.Get("Authorization")
@@ -25,10 +32,10 @@ func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, map[string]string{"error": "invalid token"})
 		}
 
-		c.Set("user_id", claims.UserID)
-		c.Set("user_role", claims.UserRole)
-		c.Set("employee_id", claims.EmployeeID)
-		c.Set("employee_fullname", claims.EmployeeFullname)
+		c.Set(USER_ID_KEY, claims.UserID)
+		c.Set(USER_ROLE_KEY, claims.UserRole)
+		c.Set(EMPLOYEE_ID_KEY, claims.EmployeeID)
+		c.Set(EMPLOYEE_FULLNAME_KEY, claims.EmployeeFullname)
 
 		return next(c)
 	}

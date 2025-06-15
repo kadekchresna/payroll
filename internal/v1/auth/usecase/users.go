@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/kadekchresna/payroll/config"
 	"github.com/kadekchresna/payroll/helper/jwt"
@@ -25,10 +24,16 @@ type userUsecase struct {
 	config       config.Config
 }
 
-func NewUserUsecase(userRepo auth_repository_interface.IUserRepository, config config.Config, employeeRepo repository_interface.IEmployeeRepository) usecase_interface.IUserUsecase {
+func NewUserUsecase(
+	config config.Config,
+	time helper_time.TimeHelper,
+	userRepo auth_repository_interface.IUserRepository,
+	employeeRepo repository_interface.IEmployeeRepository,
+
+) usecase_interface.IUserUsecase {
 	return &userUsecase{
 		userRepo:     userRepo,
-		time:         helper_time.NewTime(time.Time{}),
+		time:         time,
 		config:       config,
 		employeeRepo: employeeRepo,
 	}
@@ -78,7 +83,14 @@ func (uc *userUsecase) Login(ctx context.Context, req dto.LoginUserRequest) (*dt
 		return nil, fmt.Errorf("Failed to retrieve employee data, %s", err.Error())
 	}
 
-	accessToken, refreshToken, err := jwt.GenerateToken(uc.config.AppJWTSecret, user.ID, user.Role, employee.ID, employee.FullName)
+	employeeID := 0
+	employeeFullname := ""
+	if employee != nil {
+		employeeID = employee.ID
+		employeeFullname = employee.FullName
+	}
+
+	accessToken, refreshToken, err := jwt.GenerateToken(uc.config.AppJWTSecret, user.ID, user.Role, employeeID, employeeFullname)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to generate token user, %s", err.Error())
 	}

@@ -1,6 +1,8 @@
 package logger
 
 import (
+	"context"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -39,4 +41,12 @@ func Log() *zap.Logger {
 
 	return logger
 
+}
+
+func LogWithContext(ctx context.Context) *zap.Logger {
+	requestID, ok := ctx.Value(RequestIDKey).(string)
+	if !ok || requestID == "" {
+		return logger
+	}
+	return logger.With(zap.String("request_id", requestID))
 }
