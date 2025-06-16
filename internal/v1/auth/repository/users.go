@@ -33,7 +33,7 @@ func (r *userRepo) Create(ctx context.Context, user *model.User) error {
 }
 
 func (r *userRepo) GetByUsername(ctx context.Context, username string) (*model.User, error) {
-	var user model.User
+	var user dao.UserDAO
 	err := r.db.WithContext(ctx).Where("username = ?", username).First(&user).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -41,5 +41,19 @@ func (r *userRepo) GetByUsername(ctx context.Context, username string) (*model.U
 		}
 		return nil, err
 	}
-	return &user, nil
+
+	ud := model.User{
+		Username:  user.Username,
+		Password:  user.Password,
+		Salt:      user.Salt,
+		Status:    user.Status,
+		Role:      user.Role,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+		CreatedBy: user.CreatedBy,
+		UpdatedBy: user.UpdatedBy,
+		ID:        user.ID,
+	}
+
+	return &ud, nil
 }

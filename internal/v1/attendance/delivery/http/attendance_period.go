@@ -6,6 +6,7 @@ import (
 
 	"github.com/kadekchresna/payroll/config"
 	"github.com/kadekchresna/payroll/helper/jwt"
+	"github.com/kadekchresna/payroll/helper/logger"
 	"github.com/kadekchresna/payroll/internal/v1/attendance/dto"
 	usecase_interface "github.com/kadekchresna/payroll/internal/v1/attendance/usecase/interface"
 
@@ -40,25 +41,27 @@ func (h *AttendancePeriodHandler) Create(c echo.Context) error {
 	var req AttendancePeriodRequest
 
 	ctx := c.Request().Context()
+	requestID, _ := ctx.Value(logger.RequestIDKey).(string)
+
 	if err := c.Bind(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid input")
+		return c.JSON(http.StatusBadRequest, echo.Map{"message": "invalid input", "request_id": requestID})
 	}
 
 	parsedPeriodStart, err := time.Parse("2006-01-02", req.PeriodStart)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid period start format, use YYYY-MM-DD")
+		return c.JSON(http.StatusBadRequest, echo.Map{"message": "invalid period start format, use YYYY-MM-DD", "request_id": requestID})
 	}
 
 	parsedPeriodEnd, err := time.Parse("2006-01-02", req.PeriodEnd)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid period end format, use YYYY-MM-DD")
+		return c.JSON(http.StatusBadRequest, echo.Map{"message": "invalid period end format, use YYYY-MM-DD", "request_id": requestID})
 	}
 
 	userID, _ := c.Get(jwt.USER_ID_KEY).(int)
 	userRole, _ := c.Get(jwt.USER_ROLE_KEY).(string)
 
 	if userRole != "admin" {
-		return echo.NewHTTPError(http.StatusUnauthorized, "only admin is authorized to access this content")
+		return c.JSON(http.StatusUnauthorized, echo.Map{"message": "only admin is authorized to access this content", "request_id": requestID})
 
 	}
 
@@ -69,8 +72,8 @@ func (h *AttendancePeriodHandler) Create(c echo.Context) error {
 	}
 
 	if err := h.uc.CreateAttendancePeriod(ctx, attendance); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadGateway, echo.Map{"message": "create attendance period failed", "error": err.Error(), "request_id": requestID})
 	}
 
-	return c.JSON(http.StatusCreated, echo.Map{"message": "attendance period created"})
+	return c.JSON(http.StatusCreated, echo.Map{"message": "create attendance period successfull", "request_id": requestID})
 }

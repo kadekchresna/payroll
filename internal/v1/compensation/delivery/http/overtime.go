@@ -40,16 +40,15 @@ func (h *OvertimeHandler) Create(c echo.Context) error {
 	var req OvertimeRequest
 
 	ctx := c.Request().Context()
+	requestID, _ := ctx.Value(logger.RequestIDKey).(string)
 	if err := c.Bind(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid input")
+		return c.JSON(http.StatusBadRequest, echo.Map{"message": "invalid input", "request_id": requestID})
 	}
 
 	parsedDate, err := time.Parse("2006-01-02", req.Date)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid date format, use YYYY-MM-DD")
+		return c.JSON(http.StatusBadRequest, echo.Map{"message": "invalid date format, use YYYY-MM-DD", "request_id": requestID})
 	}
-
-	requestID, _ := ctx.Value(logger.RequestIDKey).(string)
 
 	userID, _ := c.Get(jwt.USER_ID_KEY).(int)
 	employeeID, _ := c.Get(jwt.EMPLOYEE_ID_KEY).(int)
@@ -62,7 +61,7 @@ func (h *OvertimeHandler) Create(c echo.Context) error {
 	}
 
 	if err := h.uc.CreateOvertime(ctx, overtime); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadRequest, echo.Map{"message": "create overtime failed", "error": err.Error(), "request_id": requestID})
 	}
 
 	return c.JSON(http.StatusCreated, echo.Map{"message": "overtime created", "request_id": requestID})

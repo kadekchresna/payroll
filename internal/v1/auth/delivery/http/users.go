@@ -3,6 +3,7 @@ package delivery_http
 import (
 	"net/http"
 
+	"github.com/kadekchresna/payroll/helper/logger"
 	"github.com/kadekchresna/payroll/internal/v1/auth/dto"
 	usecase_interface "github.com/kadekchresna/payroll/internal/v1/auth/usecase/interface"
 	"github.com/labstack/echo/v4"
@@ -21,27 +22,33 @@ func NewUsersHandler(e *echo.Group, uc usecase_interface.IUserUsecase) {
 
 func (h *UsersHandler) Register(c echo.Context) error {
 	var req dto.CreateUserRequest
+
+	ctx := c.Request().Context()
+	requestID, _ := ctx.Value(logger.RequestIDKey).(string)
+
 	if err := c.Bind(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid input")
+		return c.JSON(http.StatusBadRequest, echo.Map{"message": "invalid input", "request_id": requestID})
 	}
 
-	if err := h.uc.Create(c.Request().Context(), req); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	if err := h.uc.Create(ctx, req); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"message": "register failed", "error": err.Error(), "request_id": requestID})
 	}
 
-	return c.JSON(http.StatusCreated, echo.Map{"message": "Register successful"})
+	return c.JSON(http.StatusCreated, echo.Map{"message": "register successful", "request_id": requestID})
 }
 
 func (h *UsersHandler) Login(c echo.Context) error {
 	var req dto.LoginUserRequest
+	ctx := c.Request().Context()
+	requestID, _ := ctx.Value(logger.RequestIDKey).(string)
 	if err := c.Bind(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid input")
+		return c.JSON(http.StatusBadRequest, echo.Map{"message": "invalid input", "request_id": requestID})
 	}
 
-	res, err := h.uc.Login(c.Request().Context(), req)
+	res, err := h.uc.Login(ctx, req)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadRequest, echo.Map{"message": "login failed", "error": err.Error(), "request_id": requestID})
 	}
 
-	return c.JSON(http.StatusCreated, echo.Map{"message": "Login Successful", "data": res})
+	return c.JSON(http.StatusCreated, echo.Map{"message": "login successful", "data": res, "request_id": requestID})
 }
