@@ -81,7 +81,7 @@ This project dividing code into layers:
     make up
 ```
 
-3. Access the service through `:8081` with this [postman collection]()
+3. Access the service through `:8081` with this [postman collection](https://github.com/kadekchresna/payroll/blob/master/payroll.postman_collection.json)
 
 ## How to Run Unit Coverage
 
