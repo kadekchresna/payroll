@@ -90,3 +90,29 @@ This project dividing code into layers:
 ```
 make unit-test
 ```
+
+## User Credential
+
+1. Login as Employee
+
+```
+    "username": "user1"
+    "password": "secret123"
+```
+
+2. Login as Admin
+
+```
+    "username": "admin"
+    "password": "1234567890"
+```
+
+## Note
+
+1. Each endpoint must have `Authorization` header in order to access the enpoint
+
+```
+Authorization:Bearer xxxxx.xxxxxxxxxxxxx.xxxxxxx
+```
+
+2. In order the employee to able to submit overtime, they have to clocked out first by submit attendance second time at the same specified date

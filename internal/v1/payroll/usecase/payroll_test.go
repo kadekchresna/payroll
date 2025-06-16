@@ -35,7 +35,7 @@ func Test_payrollUsecase_GetPayrollSummary(t *testing.T) {
 		TotalTakeHomePayAll: 10000,
 	}
 
-	now := time.Now()
+	now := time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 	type args struct {
 		ctx context.Context
 	}
@@ -187,7 +187,7 @@ func Test_payrollUsecase_GetPayrollSummary(t *testing.T) {
 
 func Test_payrollUsecase_GetPayrollByID(t *testing.T) {
 
-	now := time.Now()
+	now := time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 
 	req := dto.GetEmployeePayrollRequest{
 		EmployeeID: 1,
@@ -195,7 +195,7 @@ func Test_payrollUsecase_GetPayrollByID(t *testing.T) {
 	}
 
 	res := dto.GetEmployeePayrollResponse{
-		TotalWorkingDaysInAttendancePeriod: 2,
+		TotalWorkingDaysInAttendancePeriod: 1,
 		TotalSalaryPerMonth:                10000,
 		TotalAttendanceDays:                1,
 		TotalOvertimeHours:                 1,
@@ -434,17 +434,17 @@ func Test_payrollUsecase_GetPayrollByID(t *testing.T) {
 
 func Test_payrollUsecase_CreatePayroll(t *testing.T) {
 
-	now := time.Now()
+	now := time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 
 	p := payslip_model.Payslip{
 		ID:                    0,
 		EmployeeID:            1,
 		TotalAttendanceDays:   1,
 		TotalOvertimeHours:    1,
-		TotalAttendanceSalary: 5000,
-		TotalOvertimeSalary:   1250,
+		TotalAttendanceSalary: 10000,
+		TotalOvertimeSalary:   2500,
 		TotalReimbursement:    10000,
-		TotalTakeHomePay:      16250,
+		TotalTakeHomePay:      22500,
 		PeriodID:              1,
 		CreatedAt:             now,
 		UpdatedAt:             now,

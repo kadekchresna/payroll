@@ -18,7 +18,7 @@ import (
 
 func Test_reimbursementUsecase_CreateReimbursement(t *testing.T) {
 
-	now := time.Now()
+	now := time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 
 	r := model.Reimbursement{
 		EmployeeID:  1,

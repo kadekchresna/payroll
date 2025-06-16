@@ -61,7 +61,11 @@ func (u *overtimeUsecase) CreateOvertime(ctx context.Context, req *dto.CreateOve
 		return e
 	}
 
-	if latestAttendance.CheckedOutAt == nil {
+	if latestAttendance == nil {
+		return fmt.Errorf("You are not yet clocked in nor clocked out at the specified date %s", req.Date.Format(time.DateOnly))
+	}
+
+	if latestAttendance != nil && latestAttendance.CheckedOutAt == nil {
 		return fmt.Errorf("You are not yet clocked out at the specified date %s", req.Date.Format(time.DateOnly))
 	}
 

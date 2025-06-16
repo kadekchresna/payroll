@@ -18,7 +18,7 @@ import (
 
 func Test_attendancePeriodUsecase_CreateAttendancePeriod(t *testing.T) {
 
-	now := time.Now()
+	now := time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 
 	req := dto.CreateAttendancePeriodRequest{
 		PeriodStart: now.Add(-24 * time.Hour),

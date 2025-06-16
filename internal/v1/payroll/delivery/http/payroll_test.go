@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/kadekchresna/payroll/config"
+	"github.com/kadekchresna/payroll/helper/jwt"
 	"github.com/kadekchresna/payroll/internal/v1/payroll/dto"
 	usecase_interface "github.com/kadekchresna/payroll/internal/v1/payroll/usecase/interface/mocks"
 	"github.com/labstack/echo/v4"
@@ -64,6 +65,8 @@ func TestPayrollHandler_GetPayrollSummary(t *testing.T) {
 			rec := httptest.NewRecorder()
 
 			c := e.NewContext(req, rec)
+
+			c.Set(jwt.USER_ROLE_KEY, "admin")
 
 			h := tt.beforeFunc(uc)
 			if err := h.GetPayrollSummary(c); (err != nil) != tt.wantErr {
@@ -196,6 +199,7 @@ func TestPayrollHandler_Create(t *testing.T) {
 			rec := httptest.NewRecorder()
 
 			c := e.NewContext(req, rec)
+			c.Set(jwt.USER_ROLE_KEY, "admin")
 
 			h := tt.beforeFunc(uc)
 			if err := h.Create(c); (err != nil) != tt.wantErr {

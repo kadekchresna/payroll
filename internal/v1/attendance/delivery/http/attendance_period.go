@@ -44,24 +44,24 @@ func (h *AttendancePeriodHandler) Create(c echo.Context) error {
 	requestID, _ := ctx.Value(logger.RequestIDKey).(string)
 
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"message": "invalid input", "request_id": requestID})
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{"message": "invalid input", "request_id": requestID})
 	}
 
 	parsedPeriodStart, err := time.Parse("2006-01-02", req.PeriodStart)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"message": "invalid period start format, use YYYY-MM-DD", "request_id": requestID})
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{"message": "invalid period start format, use YYYY-MM-DD", "request_id": requestID})
 	}
 
 	parsedPeriodEnd, err := time.Parse("2006-01-02", req.PeriodEnd)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"message": "invalid period end format, use YYYY-MM-DD", "request_id": requestID})
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{"message": "invalid period end format, use YYYY-MM-DD", "request_id": requestID})
 	}
 
 	userID, _ := c.Get(jwt.USER_ID_KEY).(int)
 	userRole, _ := c.Get(jwt.USER_ROLE_KEY).(string)
 
 	if userRole != "admin" {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"message": "only admin is authorized to access this content", "request_id": requestID})
+		return echo.NewHTTPError(http.StatusUnauthorized, echo.Map{"message": "only admin is authorized to access this content", "request_id": requestID})
 
 	}
 
@@ -72,7 +72,7 @@ func (h *AttendancePeriodHandler) Create(c echo.Context) error {
 	}
 
 	if err := h.uc.CreateAttendancePeriod(ctx, attendance); err != nil {
-		return c.JSON(http.StatusBadGateway, echo.Map{"message": "create attendance period failed", "error": err.Error(), "request_id": requestID})
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{"message": "create attendance period failed", "error": err.Error(), "request_id": requestID})
 	}
 
 	return c.JSON(http.StatusCreated, echo.Map{"message": "create attendance period successfull", "request_id": requestID})

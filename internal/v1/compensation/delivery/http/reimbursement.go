@@ -43,12 +43,12 @@ func (h *ReimbursementHandler) Create(c echo.Context) error {
 	ctx := c.Request().Context()
 	requestID, _ := ctx.Value(logger.RequestIDKey).(string)
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"message": "invalid input", "request_id": requestID})
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{"message": "invalid input", "request_id": requestID})
 	}
 
 	parsedDate, err := time.Parse("2006-01-02", req.Date)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"message": "invalid date format, use YYYY-MM-DD", "request_id": requestID})
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{"message": "invalid date format, use YYYY-MM-DD", "request_id": requestID})
 
 	}
 
@@ -64,7 +64,7 @@ func (h *ReimbursementHandler) Create(c echo.Context) error {
 	}
 
 	if err := h.uc.CreateReimbursement(ctx, overtime); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"message": "create reimbursement failed", "error": err.Error(), "request_id": requestID})
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{"message": "create reimbursement failed", "error": err.Error(), "request_id": requestID})
 	}
 
 	return c.JSON(http.StatusCreated, echo.Map{"message": "reimbursement created", "request_id": requestID})

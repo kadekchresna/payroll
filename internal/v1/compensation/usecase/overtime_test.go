@@ -20,7 +20,7 @@ import (
 
 func Test_overtimeUsecase_CreateOvertime(t *testing.T) {
 
-	now := time.Now()
+	now := time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 	checkedOutAt := now
 
 	overtimeModel := compensation_model.Overtime{

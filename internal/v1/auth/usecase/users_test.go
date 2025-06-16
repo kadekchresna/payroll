@@ -20,7 +20,7 @@ import (
 )
 
 func Test_userUsecase_Create(t *testing.T) {
-	now := time.Now()
+	now := time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 
 	type args struct {
 		ctx context.Context
@@ -94,7 +94,7 @@ func Test_userUsecase_Create(t *testing.T) {
 }
 
 func Test_userUsecase_Login(t *testing.T) {
-	now := time.Now()
+	now := time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 
 	u := auth_model.User{
 		ID:       1,

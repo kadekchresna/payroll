@@ -14,7 +14,7 @@ import (
 )
 
 func Test_overtimeRepository_Create(t *testing.T) {
-	now := time.Now()
+	now := time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 	ot := model.Overtime{
 		ID:         1,
 		EmployeeID: 1,

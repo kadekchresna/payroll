@@ -43,7 +43,7 @@ func (h *PayrollHandler) Create(c echo.Context) error {
 	ctx := c.Request().Context()
 	requestID, _ := ctx.Value(logger.RequestIDKey).(string)
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"message": "invalid input", "request_id": requestID})
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{"message": "invalid input", "request_id": requestID})
 	}
 
 	userID, _ := c.Get(jwt.USER_ID_KEY).(int)
@@ -56,12 +56,12 @@ func (h *PayrollHandler) Create(c echo.Context) error {
 	userRole, _ := c.Get(jwt.USER_ROLE_KEY).(string)
 
 	if userRole != "admin" {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"message": "only admin is authorized to access this content", "request_id": requestID})
+		return echo.NewHTTPError(http.StatusUnauthorized, echo.Map{"message": "only admin is authorized to access this content", "request_id": requestID})
 
 	}
 
 	if err := h.uc.CreatePayroll(ctx, payroll); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"message": "create payroll failed", "error": err.Error(), "request_id": requestID})
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{"message": "create payroll failed", "error": err.Error(), "request_id": requestID})
 	}
 
 	return c.JSON(http.StatusCreated, echo.Map{"message": "payroll created", "request_id": requestID})
@@ -78,7 +78,7 @@ func (h *PayrollHandler) GetPayroll(c echo.Context) error {
 	requestID, _ := ctx.Value(logger.RequestIDKey).(string)
 
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"message": "invalid input", "request_id": requestID})
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{"message": "invalid input", "request_id": requestID})
 	}
 
 	employeeID, _ := c.Get(jwt.EMPLOYEE_ID_KEY).(int)
@@ -90,7 +90,7 @@ func (h *PayrollHandler) GetPayroll(c echo.Context) error {
 
 	res, err := h.uc.GetPayrollByID(ctx, &payroll)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"message": "retrieve payroll failed", "error": err.Error(), "request_id": requestID})
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{"message": "retrieve payroll failed", "error": err.Error(), "request_id": requestID})
 	}
 
 	return c.JSON(http.StatusCreated, echo.Map{"message": "payroll retrieve successfully", "request_id": requestID, "data": res})
@@ -104,13 +104,13 @@ func (h *PayrollHandler) GetPayrollSummary(c echo.Context) error {
 	userRole, _ := c.Get(jwt.USER_ROLE_KEY).(string)
 
 	if userRole != "admin" {
-		return c.JSON(http.StatusUnauthorized, echo.Map{"message": "only admin is authorized to access this content", "request_id": requestID})
+		return echo.NewHTTPError(http.StatusUnauthorized, echo.Map{"message": "only admin is authorized to access this content", "request_id": requestID})
 
 	}
 
 	res, err := h.uc.GetPayrollSummary(ctx)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"message": "retrieve payroll summary failed", "error": err.Error(), "request_id": requestID})
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{"message": "retrieve payroll summary failed", "error": err.Error(), "request_id": requestID})
 	}
 
 	return c.JSON(http.StatusCreated, echo.Map{"message": "payroll summary retrieve successfully", "request_id": requestID, "data": res})

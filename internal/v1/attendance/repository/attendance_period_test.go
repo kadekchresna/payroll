@@ -16,7 +16,7 @@ import (
 )
 
 func Test_attendancePeriodRepository_Create(t *testing.T) {
-	now := time.Now()
+	now := time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 	ap := model.AttendancePeriod{
 		ID:                 1,
 		PeriodStart:        now.AddDate(0, 0, -10),
@@ -92,7 +92,7 @@ func Test_attendancePeriodRepository_Create(t *testing.T) {
 }
 
 func Test_attendancePeriodRepository_GetByPeriodIntersect(t *testing.T) {
-	now := time.Now()
+	now := time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 	ap := dao.AttendancePeriodDAO{
 		ID:                 1,
 		PeriodStart:        now.AddDate(0, 0, -10),
@@ -219,7 +219,7 @@ func ptrBool(b bool) *bool {
 }
 
 func Test_attendancePeriodRepository_GetByID(t *testing.T) {
-	now := time.Now()
+	now := time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 	ap := dao.AttendancePeriodDAO{
 		ID:                 1,
 		PeriodStart:        now.AddDate(0, 0, -7),
@@ -321,7 +321,7 @@ func Test_attendancePeriodRepository_GetByID(t *testing.T) {
 }
 
 func Test_attendancePeriodRepository_UpdatePeriod(t *testing.T) {
-	now := time.Now()
+	now := time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 	ap := model.AttendancePeriod{
 		ID:                 1,
 		IsPayslipGenerated: true,
