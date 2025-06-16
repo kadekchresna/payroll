@@ -82,6 +82,15 @@ This project dividing code into layers:
 ```
 
 3. Access the service through `:8081` with this [postman collection](https://github.com/kadekchresna/payroll/blob/master/payroll.postman_collection.json)
+4. To connect to the deployed PostgreSQL database, you can use this credential
+
+```
+    HOST: localhost
+    PORT: 5432
+    USER: postgres
+    PASS: secret
+    DB: payroll_db
+```
 
 ## How to Run Unit Coverage
 
