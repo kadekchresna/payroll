@@ -53,7 +53,7 @@ func main() {
 		log.Fatalf("Could not create migrate instance: %v", err)
 	}
 
-	switch command := os.Args[2]; command {
+	switch command := os.Args[1]; command {
 	case "up":
 		err := m.Up()
 		if err != nil && err != migrate.ErrNoChange {

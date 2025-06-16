@@ -5,10 +5,10 @@ migrate-create:
 	migrate create -ext sql -dir ./migration $(name)
 
 migrate-up:
-	go run migration/migrate.go $(db) up
+	go run migration/migrate.go up
 
 migrate-down:	
-	go run migration/migrate.go $(db) down
+	go run migration/migrate.go down
 
 unit-test:
 	go test -coverprofile=coverage.out \
@@ -27,3 +27,10 @@ unit-test:
 		./internal/v1/payroll/delivery/... \
 		./internal/v1/payroll/usecase \
 		./internal/v1/payslip/repository  && go tool cover -func=coverage.out
+
+
+tidy:
+	go mod tidy
+
+up:
+	docker-compose up

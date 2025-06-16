@@ -1,0 +1,376 @@
+{
+	"info": {
+		"_postman_id": "606b4a4c-2079-4f48-b2f0-dccbcab603cc",
+		"name": "payroll",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7128831",
+		"_collection_link": "https://sf-dis-buyback.postman.co/workspace/Team-Workspace~2ea2b843-8fcb-45cd-868b-0dbc6c63d9b0/collection/7128831-606b4a4c-2079-4f48-b2f0-dccbcab603cc?action=share&source=collection_link&creator=7128831"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin_2\",\n    \"password\": \"1234567890\"\n}   ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/api/v1/auth/register",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"user2\",\n    \"password\": \"secret123\"\n\n    // \"username\": \"admin\",\n    // \"password\": \"1234567890\"\n\n}   ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/api/v1/auth/login",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "attendance",
+			"item": [
+				{
+					"name": "Get Attendances",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoidXNlcnMiLCJleHAiOjE3NDk5NzUyMjYsImlhdCI6MTc0OTk3NDMyNn0.Gzu3LhgSG2HdU9uuLfuajOTnkBQSkYwDLtecxnOQzIM",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:8081/api/v1/attendances/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"attendances",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Attendances",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJlbXBsb3llZV9pZCI6MiwiZW1wbG95ZWVfZnVsbG5hbWUiOiJFbXBsb3llZSAyIiwidXNlcl9yb2xlIjoiZW1wbG95ZWUiLCJleHAiOjE3NTAwODY2MTcsImlhdCI6MTc1MDA4NTcxN30.ZtX26CVGPB69VihFCBIx95E7v6O8PaUKYmkZqC8Yj7Y",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"date\": \"2025-06-14\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/api/v1/attendances",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"attendances"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "attendance period",
+			"item": [
+				{
+					"name": "Create Attendances Period",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJlbXBsb3llZV9pZCI6MiwiZW1wbG95ZWVfZnVsbG5hbWUiOiJFbXBsb3llZSAyIiwidXNlcl9yb2xlIjoiZW1wbG95ZWUiLCJleHAiOjE3NTAwODY2MTcsImlhdCI6MTc1MDA4NTcxN30.ZtX26CVGPB69VihFCBIx95E7v6O8PaUKYmkZqC8Yj7Y",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"period_start\": \"2025-06-22\",\n    \"period_end\": \"2025-06-23\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/api/v1/attendances-period",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"attendances-period"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "overtime",
+			"item": [
+				{
+					"name": "Create Overtime",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJlbXBsb3llZV9pZCI6MiwiZW1wbG95ZWVfZnVsbG5hbWUiOiJFbXBsb3llZSAyIiwidXNlcl9yb2xlIjoiZW1wbG95ZWUiLCJleHAiOjE3NTAwODY2MTcsImlhdCI6MTc1MDA4NTcxN30.ZtX26CVGPB69VihFCBIx95E7v6O8PaUKYmkZqC8Yj7Y",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"date\": \"2025-06-16\",\n    \"hours\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/api/v1/compensation/overtime",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"compensation",
+								"overtime"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "reimbursement",
+			"item": [
+				{
+					"name": "Create Reimbursement",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJlbXBsb3llZV9pZCI6MiwiZW1wbG95ZWVfZnVsbG5hbWUiOiJFbXBsb3llZSAyIiwidXNlcl9yb2xlIjoiZW1wbG95ZWUiLCJleHAiOjE3NTAwODY2MTcsImlhdCI6MTc1MDA4NTcxN30.ZtX26CVGPB69VihFCBIx95E7v6O8PaUKYmkZqC8Yj7Y",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"date\": \"2025-06-14\",\n    \"amount\": 20000,\n    \"description\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus eleifend sapien ut ex dignissim, eget hendrerit dui commodo. Mauris quis lacus hendrerit, ultricies leo quis, sodales felis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vulputate neque ac justo malesuada accumsan. Donec facilisis, diam nec laoreet aliquam, est quam blandit magna, vitae volutpat velit sapien nec augue. Aliquam augue dui, dapibus at felis ac, egestas finibus est. Nulla mi nunc, iaculis sit amet nulla laoreet, mollis tempor nisl. Suspendisse eu nisi lacus. Cras mattis urna sed tellus luctus, vitae fermentum sem rhoncus. Phasellus vestibulum vulputate eros a ultrices.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/api/v1/compensation/reimbursement",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"compensation",
+								"reimbursement"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "payroll",
+			"item": [
+				{
+					"name": "Create Payroll",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJlbXBsb3llZV9pZCI6MiwiZW1wbG95ZWVfZnVsbG5hbWUiOiJFbXBsb3llZSAyIiwidXNlcl9yb2xlIjoiZW1wbG95ZWUiLCJleHAiOjE3NTAwODY2MTcsImlhdCI6MTc1MDA4NTcxN30.ZtX26CVGPB69VihFCBIx95E7v6O8PaUKYmkZqC8Yj7Y",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attendance_period_id\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/api/v1/payroll",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"payroll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payroll",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJlbXBsb3llZV9pZCI6MiwiZW1wbG95ZWVfZnVsbG5hbWUiOiJFbXBsb3llZSAyIiwidXNlcl9yb2xlIjoiZW1wbG95ZWUiLCJleHAiOjE3NTAwODY2MTcsImlhdCI6MTc1MDA4NTcxN30.ZtX26CVGPB69VihFCBIx95E7v6O8PaUKYmkZqC8Yj7Y",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attendance_period_id\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/api/v1/payroll?payslip_id=13",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"payroll"
+							],
+							"query": [
+								{
+									"key": "payslip_id",
+									"value": "13"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payroll Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJlbXBsb3llZV9pZCI6MiwiZW1wbG95ZWVfZnVsbG5hbWUiOiJFbXBsb3llZSAyIiwidXNlcl9yb2xlIjoiZW1wbG95ZWUiLCJleHAiOjE3NTAwODY2MTcsImlhdCI6MTc1MDA4NTcxN30.ZtX26CVGPB69VihFCBIx95E7v6O8PaUKYmkZqC8Yj7Y",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:8081/api/v1/payroll/summary",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"payroll",
+								"summary"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

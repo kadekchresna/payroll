@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  payroll:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: payroll-service
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_DSN=postgresql://postgres:secret@postgres:5432/payroll_db?sslmode=disable
+      - APP_PORT=8081
+      - APP_NAME=payroll-service
+      - APP_ENV=prd
+      - APP_JWT_SECRET=secret
+    depends_on:
+      - postgres
+    restart: always
+
+  postgres:
+    image: postgres:16
+    container_name: payroll-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: payroll_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pgdata:
