@@ -45,9 +45,9 @@ func (u *attendanceUsecase) CreateAttendance(ctx context.Context, req *dto.Creat
 
 	now := u.times.Now()
 
-	// if helper_time.IsWeekend(now.Weekday()) {
-	// 	return errors.New("Today is weekend")
-	// }
+	if helper_time.IsWeekend(now.Weekday()) {
+		return errors.New("Today is weekend")
+	}
 
 	if req.EmployeeID == 0 {
 		return errors.New("Employee ID is empty")
@@ -73,7 +73,7 @@ func (u *attendanceUsecase) CreateAttendance(ctx context.Context, req *dto.Creat
 		isCheckOut = true
 	}
 
-	if attendace.CheckedOutAt != nil {
+	if attendace != nil && attendace.CheckedOutAt != nil {
 		return nil
 	}
 

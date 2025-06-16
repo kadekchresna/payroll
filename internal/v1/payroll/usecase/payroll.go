@@ -78,10 +78,10 @@ func (r *payrollUsecase) CreatePayroll(ctx context.Context, req dto.CreatePayrol
 		return errors.New("Attendance period is not found")
 	}
 
-	// if attendancePeriod.IsPayslipGenerated {
-	// 	return errors.New("Payroll already executed for this attendance period")
+	if attendancePeriod.IsPayslipGenerated {
+		return errors.New("Payroll already executed for this attendance period")
 
-	// }
+	}
 
 	attendanceEmployees, err := r.attendanceRepo.GetEmployeeCountByDateRange(ctx, attendancePeriod.PeriodStart, attendancePeriod.PeriodEnd)
 	if err != nil {
@@ -294,7 +294,11 @@ func (r *payrollUsecase) CreatePayroll(ctx context.Context, req dto.CreatePayrol
 			UpdatedAt:          now,
 			UpdatedBy:          req.UserID,
 		}
-		r.attendancePeriodRepo.UpdatePeriod(ctx, ap)
+		if err := r.attendancePeriodRepo.UpdatePeriod(ctx, ap); err != nil {
+			e := fmt.Errorf("Failed to update attendance period data, %s", err.Error())
+			logger.LogWithContext(ctx).Error(fmt.Sprintf("error attendancePeriodRepo.UpdatePeriod. %s", e.Error()))
+			return e
+		}
 
 		if err := r.auditRepo.Create(ctx, audit_model.AuditLog{
 			TableName: "attendances_period",
@@ -329,6 +333,9 @@ func (r *payrollUsecase) CreatePayroll(ctx context.Context, req dto.CreatePayrol
 		}
 		return nil
 	})
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

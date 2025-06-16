@@ -74,6 +74,10 @@ func (uc *userUsecase) Login(ctx context.Context, req dto.LoginUserRequest) (*dt
 		return nil, fmt.Errorf("Failed to retrieve user data, %s", err.Error())
 	}
 
+	if user == nil {
+		return nil, errors.New("User is not found")
+	}
+
 	if !password.ComparePasswordWithHash(req.Password, user.Salt, user.Password) {
 		return nil, errors.New("Password is invalid")
 	}

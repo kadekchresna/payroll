@@ -60,36 +60,6 @@ func (r *attendanceRepository) Create(ctx context.Context, a *model.Attendance) 
 	return da.ID, nil
 }
 
-func (r *attendanceRepository) GetByID(ctx context.Context, id int) (*model.Attendance, error) {
-	var da dao.AttendanceDAO
-	err := r.db.WithContext(ctx).First(&da, id).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, err
-	}
-
-	checkedOutAtValue, _ := da.CheckedOutAt.Value()
-	var checkedOutAt *time.Time
-	if t, ok := checkedOutAtValue.(time.Time); ok {
-		checkedOutAt = &t
-	} else if t, ok := checkedOutAtValue.(*time.Time); ok {
-		checkedOutAt = t
-	}
-	return &model.Attendance{
-		ID:           da.ID,
-		EmployeeID:   da.EmployeeID,
-		Date:         da.Date,
-		CreatedAt:    da.CreatedAt,
-		UpdatedAt:    da.UpdatedAt,
-		CreatedBy:    da.CreatedBy,
-		UpdatedBy:    da.UpdatedBy,
-		CheckedInAt:  da.CheckedInAt,
-		CheckedOutAt: checkedOutAt,
-	}, nil
-}
-
 func (r *attendanceRepository) GetByDateAndEmployeeID(ctx context.Context, employeeID int, date time.Time) (*model.Attendance, error) {
 	var da dao.AttendanceDAO
 

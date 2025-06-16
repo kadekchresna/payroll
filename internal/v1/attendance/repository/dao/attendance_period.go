@@ -7,8 +7,8 @@ type AttendancePeriodDAO struct {
 	PeriodStart        time.Time `gorm:"column:period_start;default:now()"`
 	PeriodEnd          time.Time `gorm:"column:period_end;default:now()"`
 	IsPayslipGenerated *bool     `gorm:"column:is_payslip_generated;default:false"`
-	CreatedAt          time.Time `gorm:"column:created_at;autoCreateTime"`
-	UpdatedAt          time.Time `gorm:"column:updated_at;autoUpdateTime"`
+	CreatedAt          time.Time `gorm:"column:created_at;autoCreateTime:false"`
+	UpdatedAt          time.Time `gorm:"column:updated_at;autoUpdateTime:false"`
 	CreatedBy          int       `gorm:"column:created_by;default:0"`
 	UpdatedBy          int       `gorm:"column:updated_by;default:0"`
 }

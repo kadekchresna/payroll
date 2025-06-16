@@ -9,7 +9,6 @@ import (
 
 type IReimbursementRepository interface {
 	Create(ctx context.Context, m *model.Reimbursement) (int, error)
-	SumReimbursementsByDateRange(ctx context.Context, startDate, endDate time.Time) ([]*model.EmployeeReimbursementSummary, error)
 	SumReimbursementsByID(ctx context.Context, id []int) ([]*model.EmployeeReimbursementSummary, error)
 	GetByDateRange(ctx context.Context, startDate, endDate time.Time) ([]model.Reimbursement, error)
 	Update(ctx context.Context, m *model.Reimbursement, ids []int) error

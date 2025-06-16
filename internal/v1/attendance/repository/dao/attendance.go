@@ -11,8 +11,8 @@ type AttendanceDAO struct {
 	Date         time.Time    `gorm:"column:date;not null;index:idx_employee_date,unique"`
 	CheckedInAt  time.Time    `gorm:"column:checked_in_at;not null;"`
 	CheckedOutAt sql.NullTime `gorm:"column:checked_out_at"`
-	CreatedAt    time.Time    `gorm:"column:created_at;autoCreateTime"`
-	UpdatedAt    time.Time    `gorm:"column:updated_at;autoUpdateTime"`
+	CreatedAt    time.Time    `gorm:"column:created_at;autoCreateTime:false"`
+	UpdatedAt    time.Time    `gorm:"column:updated_at;autoUpdateTime:false"`
 	CreatedBy    int          `gorm:"column:created_by;default:0"`
 	UpdatedBy    int          `gorm:"column:updated_by;default:0"`
 }

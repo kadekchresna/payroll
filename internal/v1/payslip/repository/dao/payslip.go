@@ -11,8 +11,8 @@ type PayslipDAO struct {
 	TotalOvertimeSalary   float64   `gorm:"column:total_overtime_salary"`
 	TotalReimbursement    float64   `gorm:"column:total_reimbursement"`
 	TotalTakeHomePay      float64   `gorm:"column:total_take_home_pay"`
-	CreatedAt             time.Time `gorm:"column:created_at"`
-	UpdatedAt             time.Time `gorm:"column:updated_at"`
+	CreatedAt             time.Time `gorm:"column:created_at;autoCreateTime:false"`
+	UpdatedAt             time.Time `gorm:"column:updated_at;autoUpdateTime:false"`
 	CreatedBy             int       `gorm:"column:created_by"`
 	UpdatedBy             int       `gorm:"column:updated_by"`
 	PeriodID              int       `gorm:"column:period_id"`

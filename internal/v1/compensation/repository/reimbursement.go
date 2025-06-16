@@ -139,37 +139,6 @@ func (r *reimbursementRepository) GetByPayslipID(ctx context.Context, payslipID 
 	return res, nil
 }
 
-func (r *reimbursementRepository) SumReimbursementsByDateRange(ctx context.Context, startDate, endDate time.Time) ([]*model.EmployeeReimbursementSummary, error) {
-	db := r.getDB(ctx)
-
-	var daos []dao.ReimbursementSumDAO
-
-	query := `
-		WITH reimbursements_period AS (
-			SELECT amount, employee_id
-			FROM reimbursements
-			WHERE date >= ? AND date <= ?
-		)
-		SELECT SUM(rp.amount) AS sum, rp.employee_id
-		FROM reimbursements_period rp
-		GROUP BY rp.employee_id;
-	`
-
-	if err := db.Raw(query, startDate, endDate).Scan(&daos).Error; err != nil {
-		return nil, err
-	}
-
-	result := make([]*model.EmployeeReimbursementSummary, 0, len(daos))
-	for _, d := range daos {
-		result = append(result, &model.EmployeeReimbursementSummary{
-			EmployeeID:  d.EmployeeID,
-			TotalAmount: d.TotalAmount,
-		})
-	}
-
-	return result, nil
-}
-
 func (r *reimbursementRepository) SumReimbursementsByID(ctx context.Context, id []int) ([]*model.EmployeeReimbursementSummary, error) {
 	db := r.getDB(ctx)
 

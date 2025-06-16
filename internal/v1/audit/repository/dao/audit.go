@@ -14,7 +14,7 @@ type AuditLog struct {
 	OldData    datatypes.JSON `gorm:"column:old_data"`
 	NewData    datatypes.JSON `gorm:"column:new_data"`
 	ChangedBy  int            `gorm:"column:changed_by;not null"`
-	ChangedAt  time.Time      `gorm:"column:changed_at;autoCreateTime"`
+	ChangedAt  time.Time      `gorm:"column:changed_at;autoCreateTime:false"`
 	IPAddress  string         `gorm:"column:ip_address;default:''"`
 	RequestID  string         `gorm:"column:request_id;default:''"`
 }
